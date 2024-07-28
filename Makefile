@@ -13,6 +13,8 @@ CHAINID=31337
 STRATEGY_ADDRESS=0x7a2088a1bFc9d81c55368AE168C2C02570cB814F
 DEPLOYMENT_FILES_DIR=contracts/script/output/${CHAINID}
 
+SHELL := /bin/bash
+
 -----------------------------: ##
 
 ___CONTRACTS___: ##
@@ -31,9 +33,7 @@ deploy-contracts-to-anvil-and-save-state: deploy-eigenlayer-contracts-to-anvil-a
 start-chain-with-contracts-deployed: ## starts anvil from a saved state file (with el and avs contracts deployed)
 	./utils/anvil/start-anvil-chain-with-el-and-avs-deployed.sh
 
-# start-chain-and-deploy-hello-world-avs: build-contracts deploy-contracts-to-anvil-and-save-state start-anvil-chain-with-el-and-avs-deployed
-
-clean-deployments:
+clean-deployments: ## Clean deployments
 	./utils/anvil/clean-deployments.sh
 
 __CLI__: ##
@@ -42,9 +42,9 @@ send-fund: ## sends fund to the operator saved in tests/keys/test.ecdsa.key.json
 	cast send 0x860B6912C2d0337ef05bbC89b0C2CB6CbAEAB4A5 --value 10ether --private-key 0x2a871d0798f97d79848a013d4936a73bf4cc922c825d33c1cf7073dff6d409c6
 
 -----------------------------: ##
-# We pipe all zapper logs through https://github.com/maoueh/zap-pretty so make sure to install it
-# TODO: piping to zap-pretty only works when zapper environment is set to production, unsure why
-____OFFCHAIN_SOFTWARE___:
+
+____OFFCHAIN_SOFTWARE___: ##
+
 start-operator: ## start operator (part of quickstart)
 	tsc && node dist/index.js
 
@@ -52,12 +52,16 @@ spam-tasks: ## start tasks spamming (part of quickstart)
 	tsc && node dist/createNewTasks.js
 
 -----------------------------: ##
+
 _____HELPER_____: ##
+
 tests-contract: ## runs all forge tests
 	cd contracts && forge test
 
-___RUST_OFFCHAIN_SOFTWARE___:
+___RUST_OFFCHAIN_SOFTWARE___: ##
+
 start-rust-operator: ## start operator (part of quickstart) 
 	cargo run --bin start_operator
-spam-rust-tasks:  ## start tasks spamming (part of quickstart)
+
+spam-rust-tasks: ## start tasks spamming (part of quickstart)
 	cargo run --bin spam_tasks
