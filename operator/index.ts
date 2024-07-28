@@ -63,7 +63,7 @@ const agent = new https.Agent({
 
 const initiateEvaluation = async (taskName: string) => {
     try {
-        const response = await axios.post(`https://ff2d-2600-1700-5958-1c80-5470-25d4-d805-9be2.ngrok-free.app/evaluate`, 
+        const response = await axios.post(``, 
             { subset: taskName },
             {
                 httpsAgent: agent,
@@ -80,7 +80,7 @@ const initiateEvaluation = async (taskName: string) => {
 
 const checkEvaluationStatus = async (taskId: string) => {
     try {
-        const response = await axios.get(`https://ff2d-2600-1700-5958-1c80-5470-25d4-d805-9be2.ngrok-free.app/status/${taskId}`, 
+        const response = await axios.get(``, 
             {
                 httpsAgent: agent,
                 timeout: 10000, // 10 seconds timeout for status check
