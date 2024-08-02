@@ -10,7 +10,7 @@ import "@eigenlayer/contracts/permissions/Pausable.sol";
 import {IRegistryCoordinator} from "@eigenlayer-middleware/src/interfaces/IRegistryCoordinator.sol";
 import "./IHelloWorldServiceManager.sol";
 
-contract HelloWorldServiceManager is 
+contract HelloWorldServiceManager is
     ECDSAServiceManagerBase,
     IHelloWorldServiceManager,
     Pausable
@@ -26,7 +26,8 @@ contract HelloWorldServiceManager is
     /* MODIFIERS */
     modifier onlyOperator() {
         require(
-            ECDSAStakeRegistry(stakeRegistry).operatorRegistered(msg.sender) == true, 
+            ECDSAStakeRegistry(stakeRegistry).operatorRegistered(msg.sender) ==
+                true,
             "Operator must be the caller"
         );
         _;
@@ -45,9 +46,13 @@ contract HelloWorldServiceManager is
         )
     {}
 
-    function createNewTask(string memory name) external {
+    function createNewTask(
+        string memory name,
+        Prompt[] memory prompts
+    ) external {
         Task memory newTask;
         newTask.name = name;
+        newTask.prompts = prompts;
         newTask.taskCreatedBlock = uint32(block.number);
 
         allTaskHashes[latestTaskNum] = keccak256(abi.encode(newTask));
@@ -74,7 +79,16 @@ contract HelloWorldServiceManager is
             "Operator has already responded to the task"
         );
 
-        bytes32 messageHash = keccak256(abi.encodePacked("MMLU subset: ", task.name, ", Accuracy: ", accuracy));
+        bytes32 messageHash = keccak256(
+            abi.encodePacked(
+                "MMLU subset: ",
+                task.name,
+                " with ",
+                task.prompts.length,
+                " prompts, Accuracy: ",
+                accuracy
+            )
+        );
         bytes32 ethSignedMessageHash = messageHash.toEthSignedMessageHash();
 
         address signer = ethSignedMessageHash.recover(signature);
@@ -86,7 +100,11 @@ contract HelloWorldServiceManager is
         emit TaskResponded(referenceTaskIndex, task, msg.sender, accuracy);
     }
 
-    function operatorHasMinimumWeight(address operator) public view returns (bool) {
-        return ECDSAStakeRegistry(stakeRegistry).getOperatorWeight(operator) >= ECDSAStakeRegistry(stakeRegistry).minimumWeight();
+    function operatorHasMinimumWeight(
+        address operator
+    ) public view returns (bool) {
+        return
+            ECDSAStakeRegistry(stakeRegistry).getOperatorWeight(operator) >=
+            ECDSAStakeRegistry(stakeRegistry).minimumWeight();
     }
 }
